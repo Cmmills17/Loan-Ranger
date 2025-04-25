@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Name: A Coding Challenge | Cameron Mills</title>
+    <title>Loan Ranger: A Coding Challenge | Cameron Mills</title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -27,7 +27,7 @@
             <div class="container">
                 <a class="navbar-brand" href="index.html">
                     <img src="/img/cmLogo.svg" height="50" class="me-1" />
-                    App Name
+                    Loan Ranger
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,14 +68,79 @@
     </header>
 
     <main class="container py-3">
-        <h1>The App UI Goes Here</h1>
+        <div class="row">
+            <div class="col-12 col-md-5 mt-3">
+                <div class="card">
+                    <div class="card-body mb-0">
+                        <div class="d-flex align-items-center mb-3">
+                            <label for="loanInput" class="me-3" style="width: 150px;">
+                                Loan Amount:
+                            </label>
+                            <input id="loanInput" class="form-control" type="text" placeholder="Enter loan amount..." />
+                        </div>
 
-        <div class="hstack gap-3">
-            <input id="messageInput" class="form-control" stlye="max-width: 16rem" placeholder="Enter a Message" />
-            <button id="submitBtn" class="btn btn-primary">
-                Display Message
-            </button>
-        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <label for="termInput" class="me-3" style="width: 150px;">Term (Months):</label>
+                            <input id="termInput" class="form-control" type="text" placeholder="Enter Months..." />
+                        </div>
+                        <div class=" d-flex align-items-center">
+                            <label for="interestInput" class="me-3" style="width: 150px;">Interest Rate:</label>
+                            <input id="interestInput" class="form-control" type="text" placeholder="Enter %..." />
+                        </div>
+                        <div class="text-end mt-5">
+                            <button id="submitBtn" class="btn btn-primary">
+                                <i class="bi bi-check-square-fill"></i> Calculate </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-7 mt-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="text-center">Your Monthly Payments</h3>
+                        <!-- Generated Monthly Payment Goes HERE!!! -->
+                        <h3 id="monthlyPayment" class="text-center mt-5 mb-5"></h3>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>Total Principal:</td>
+                                    <td class="text-end" id="total-principal"></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Interest:</td>
+                                    <td class="text-end" id="total-interest"></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Cost:</td>
+                                    <td class="text-end" id="total-cost"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-2">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <th>Month</th>
+                                    <th>Payment</th>
+                                    <th>Principal</th>
+                                    <th>Interest</th>
+                                    <th>Total Interest</th>
+                                    <th class="text-end">Balance</th>
+                                </thead>
+                                <tbody id="Payments-table">
+                                    <!-- event rows go here -->
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
     </main>
 
@@ -120,6 +185,20 @@
 
 
 
+
+    <template id="payment-row-template">
+        <tr>
+            <td class="pay-month"></td>
+            <td class="pay-payment"></td>
+            <td class="pay-pricipal"></td>
+            <td class="pay-interest"></td>
+            <td class="pay-total-interest"></td>
+            <td class="pay-balance text-end"></td>
+        </tr>
+    </template>
+
+
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
@@ -136,7 +215,7 @@
         // get the <button> element from the HTML
         let button = document.getElementById('submitBtn');
         // When the button is clicked, run the displayMessage function
-        button.addEventListener('click', displayMessage);
+        button.addEventListener('click', getValues);
 
     </script>
 </body>
