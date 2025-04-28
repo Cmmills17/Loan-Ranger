@@ -17,7 +17,8 @@ function getValues() {
 
 
     //validate
-    if (loanNumber === NaN || Number.isNaN(termNumber) || Number.isNaN(interestNumber)) {
+    if (Number.isNaN(loanNumber) || Number.isNaN(termNumber) || Number.isNaN(interestNumber)
+        || loanNumber < 0 || termNumber < 0 || interestNumber < 0) {
         Swal.fire({
             icon: 'error',
             title: 'Oops',
