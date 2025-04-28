@@ -94,6 +94,10 @@ function calculatePayments(loanNumber, termNumber, interestNumber) {
     // New array to put into tr
     let payments = [];
 
+    if (balance < 0) {
+        balance = 0
+    }
+
     for (let month = 1; month <= termNumber; month++) {
 
         let interestPayment = balance * monthlyRate;
@@ -123,6 +127,7 @@ function displayPayments(paymentsArr) {
     let tableRowTemplate = document.getElementById('payment-row-template');
 
     let paymentsTable = document.getElementById('payments-table');
+    paymentsTable.innerHTML = '';
 
     let formatOptions = {
         style: 'currency',
@@ -158,32 +163,9 @@ function displayPayments(paymentsArr) {
         let balanceTd = tableRowEl.querySelector('.pay-balance');
         balanceTd.innerText = monthlyPayment.balance.toLocaleString('en-US', formatOptions);
 
+
         paymentsTable.appendChild(tableRowEl);
     }
 
 
 }
-/*
-    month: month,
-            payment: monthlyPayment,
-            principal: principalPayment,
-            interest: interestPayment,
-            totalInterest: totalInterestPaid,
-            balance: balance
-*/
-
-
-
-/*
-   <template id="payment-row-template">
-        <tr>
-            <td class="pay-month"></td>
-            <td class="pay-payment"></td>
-            <td class="pay-principal"></td>
-            <td class="pay-interest"></td>
-            <td class="pay-total-interest"></td>
-            <td class="pay-balance text-end"></td>
-        </tr>
-    </template>
-
-*/
