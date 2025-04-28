@@ -11,23 +11,33 @@ function getValues() {
     let interestInputElement = document.getElementById('interestInput');
 
     // get what the user put into the input
-    let loanNumber = parseInt(loanInputElement.value);
+    let loanNumber = parseFloat(loanInputElement.value);
     let termNumber = parseInt(termInputElement.value);
-    let interestNumber = parseInt(interestInputElement.value);
+    let interestNumber = parseFloat(interestInputElement.value);
 
 
-    // calculate numbers
-    let resultCal = calculateNumbers(loanNumber, termNumber, interestNumber);
+    //validate
+    if (loanNumber === NaN || Number.isNaN(termNumber) || Number.isNaN(interestNumber)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops',
+            text: 'Ypur loan details appear to be invalid. Please double check your inputs.'
+        })
 
 
-    // display the generated numbers
-    displayNumbers(resultCal);
+    } else {
+        // calculate numbers
+        let resultCal = calculateNumbers(loanNumber, termNumber, interestNumber);
 
 
-    let resultsTable = generateAmortTable(loanNumber, termNumber, interestNumber);
+        // display the generated numbers
+        displayNumbers(resultCal);
 
-    displayAmortTable(schedule);
 
+        let payments = calculatePayments(loanNumber, termNumber, interestNumber);
+
+        displayPayments(payments);
+    }
 
 
 }
@@ -60,55 +70,120 @@ function calculateNumbers(loanNumber, termNumber, interestNumber) {
     return result;
 }
 
-
-
 //display the results of the users input
 function displayNumbers(results) {
+    let formatOptions = {
+        style: 'currency',
+        currency: 'USD'
+    }
 
-    document.getElementById('monthlyPayment').innerText = results.monthlyPayment.toFixed(2);
-    document.getElementById('total-principal').innerText = results.totalPrincipal.toFixed(2);
-    document.getElementById('total-interest').innerText = results.totalInterest.toFixed(2);
-    document.getElementById('total-cost').innerText = results.totalPayment.toFixed(2);
+
+    document.getElementById('monthlyPayment').innerText = results.monthlyPayment.toLocaleString('en-US', formatOptions);
+    document.getElementById('total-principal').innerText = results.totalPrincipal.toLocaleString('en-US', formatOptions);
+    document.getElementById('total-interest').innerText = results.totalInterest.toLocaleString('en-US', formatOptions);
+    document.getElementById('total-cost').innerText = results.totalPayment.toLocaleString('en-US', formatOptions);
 
 }
 
-
-function generateAmortTable(loanNumber, termNumber, interestNumber) {
+function calculatePayments(loanNumber, termNumber, interestNumber) {
     let monthlyRate = interestNumber / 1200;
     let monthlyPayment = loanNumber * monthlyRate / (1 - (1 + monthlyRate) ** (-termNumber));
 
     let balance = loanNumber;
     let totalInterestPaid = 0;
-    let schedule = [];
+    // New array to put into tr
+    let payments = [];
 
     for (let month = 1; month <= termNumber; month++) {
+
         let interestPayment = balance * monthlyRate;
         let principalPayment = monthlyPayment - interestPayment;
+
         totalInterestPaid += interestPayment;
+
         balance -= principalPayment;
 
-        // Fix rounding issues on final payment
-        if (balance < 0) balance = 0;
-
-        schedule.push({
+        let payment = {
             month: month,
             payment: monthlyPayment,
             principal: principalPayment,
             interest: interestPayment,
             totalInterest: totalInterestPaid,
             balance: balance
-        });
+        };
+        payments.push(payment)
     }
 
-    return schedule;
+    return payments;
 }
 
 
-function displayAmortTable(loanNumber, termNumber, interestNumber) {
-    let tableBody = document.getElementById('amort-table');
-    let template = document.getElementById('payment-row-template');
+function displayPayments(paymentsArr) {
 
-    tableBody.innerHTML = ''; // Clear previous entries
+    let tableRowTemplate = document.getElementById('payment-row-template');
+
+    let paymentsTable = document.getElementById('payments-table');
+
+    let formatOptions = {
+        style: 'currency',
+        currency: 'USD'
+    }
+
+
+    for (let i = 0; i < paymentsArr.length; i++) {
+
+        let monthlyPayment = paymentsArr[i];
+
+        let tableRowEl = tableRowTemplate.content.cloneNode(true);
+
+
+        let monthTd = tableRowEl.querySelector('.pay-month');
+        monthTd.innerText = monthlyPayment.month;
+
+        let paymentTd = tableRowEl.querySelector('.pay-payment');
+        paymentTd.innerText = monthlyPayment.payment.toLocaleString('en-US', formatOptions);
+
+        let principalTd = tableRowEl.querySelector('.pay-principal');
+        principalTd.innerText = monthlyPayment.principal.toLocaleString('en-US', formatOptions);
+
+
+        let interestTd = tableRowEl.querySelector('.pay-interest');
+        interestTd.innerText = monthlyPayment.interest.toLocaleString('en-US', formatOptions)
+
+
+        let totalInterestTd = tableRowEl.querySelector('.pay-total-interest');
+        totalInterestTd.innerText = monthlyPayment.totalInterest.toLocaleString('en-US', formatOptions);
+        ;
+
+        let balanceTd = tableRowEl.querySelector('.pay-balance');
+        balanceTd.innerText = monthlyPayment.balance.toLocaleString('en-US', formatOptions);
+
+        paymentsTable.appendChild(tableRowEl);
+    }
 
 
 }
+/*
+    month: month,
+            payment: monthlyPayment,
+            principal: principalPayment,
+            interest: interestPayment,
+            totalInterest: totalInterestPaid,
+            balance: balance
+*/
+
+
+
+/*
+   <template id="payment-row-template">
+        <tr>
+            <td class="pay-month"></td>
+            <td class="pay-payment"></td>
+            <td class="pay-principal"></td>
+            <td class="pay-interest"></td>
+            <td class="pay-total-interest"></td>
+            <td class="pay-balance text-end"></td>
+        </tr>
+    </template>
+
+*/
