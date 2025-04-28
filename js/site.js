@@ -22,6 +22,14 @@ function getValues() {
 
     // display the generated numbers
     displayNumbers(resultCal);
+
+
+    let resultsTable = generateAmortTable(loanNumber, termNumber, interestNumber);
+
+    displayAmortTable(schedule);
+
+
+
 }
 
 
@@ -61,5 +69,46 @@ function displayNumbers(results) {
     document.getElementById('total-principal').innerText = results.totalPrincipal.toFixed(2);
     document.getElementById('total-interest').innerText = results.totalInterest.toFixed(2);
     document.getElementById('total-cost').innerText = results.totalPayment.toFixed(2);
+
+}
+
+
+function generateAmortTable(loanNumber, termNumber, interestNumber) {
+    let monthlyRate = interestNumber / 1200;
+    let monthlyPayment = loanNumber * monthlyRate / (1 - (1 + monthlyRate) ** (-termNumber));
+
+    let balance = loanNumber;
+    let totalInterestPaid = 0;
+    let schedule = [];
+
+    for (let month = 1; month <= termNumber; month++) {
+        let interestPayment = balance * monthlyRate;
+        let principalPayment = monthlyPayment - interestPayment;
+        totalInterestPaid += interestPayment;
+        balance -= principalPayment;
+
+        // Fix rounding issues on final payment
+        if (balance < 0) balance = 0;
+
+        schedule.push({
+            month: month,
+            payment: monthlyPayment,
+            principal: principalPayment,
+            interest: interestPayment,
+            totalInterest: totalInterestPaid,
+            balance: balance
+        });
+    }
+
+    return schedule;
+}
+
+
+function displayAmortTable(loanNumber, termNumber, interestNumber) {
+    let tableBody = document.getElementById('amort-table');
+    let template = document.getElementById('payment-row-template');
+
+    tableBody.innerHTML = ''; // Clear previous entries
+
 
 }
