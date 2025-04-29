@@ -15,7 +15,6 @@ function getValues() {
     let termNumber = parseInt(termInputElement.value);
     let interestNumber = parseFloat(interestInputElement.value);
 
-
     //validate
     if (Number.isNaN(loanNumber) || Number.isNaN(termNumber) || Number.isNaN(interestNumber)
         || loanNumber < 0 || termNumber < 0 || interestNumber < 0) {
@@ -25,22 +24,17 @@ function getValues() {
             text: 'Ypur loan details appear to be invalid. Please double check your inputs.'
         })
 
-
     } else {
         // calculate numbers
         let resultCal = calculateNumbers(loanNumber, termNumber, interestNumber);
 
-
         // display the generated numbers
         displayNumbers(resultCal);
-
 
         let payments = calculatePayments(loanNumber, termNumber, interestNumber);
 
         displayPayments(payments);
     }
-
-
 }
 
 
@@ -95,10 +89,6 @@ function calculatePayments(loanNumber, termNumber, interestNumber) {
     // New array to put into tr
     let payments = [];
 
-    if (balance < 0) {
-        balance = 0
-    }
-
     for (let month = 1; month <= termNumber; month++) {
 
         let interestPayment = balance * monthlyRate;
@@ -107,6 +97,10 @@ function calculatePayments(loanNumber, termNumber, interestNumber) {
         totalInterestPaid += interestPayment;
 
         balance -= principalPayment;
+
+        if (balance < 0) {
+            balance = 0
+        }
 
         let payment = {
             month: month,
@@ -122,7 +116,6 @@ function calculatePayments(loanNumber, termNumber, interestNumber) {
     return payments;
 }
 
-
 function displayPayments(paymentsArr) {
 
     let tableRowTemplate = document.getElementById('payment-row-template');
@@ -135,13 +128,11 @@ function displayPayments(paymentsArr) {
         currency: 'USD'
     }
 
-
     for (let i = 0; i < paymentsArr.length; i++) {
 
         let monthlyPayment = paymentsArr[i];
 
         let tableRowEl = tableRowTemplate.content.cloneNode(true);
-
 
         let monthTd = tableRowEl.querySelector('.pay-month');
         monthTd.innerText = monthlyPayment.month;
@@ -164,9 +155,6 @@ function displayPayments(paymentsArr) {
         let balanceTd = tableRowEl.querySelector('.pay-balance');
         balanceTd.innerText = monthlyPayment.balance.toLocaleString('en-US', formatOptions);
 
-
         paymentsTable.appendChild(tableRowEl);
     }
-
-
 }
